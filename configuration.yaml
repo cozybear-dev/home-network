@@ -1,0 +1,214 @@
+unifi:
+  port_profiles:
+    untrusted:
+      forward: native
+    zakelijk:
+      forward: native
+    prive:
+      forward: native
+    prive_limited_egress:
+      vlan: prive
+      forward: native
+      egress: 450000
+    shared:
+      forward: native
+    disabled:
+      forward: disabled
+      port_security: true
+    native:
+      forward: native
+      network: Default
+    all:
+      forward: all
+      network: Default
+    all_limited_egress:
+      forward: all
+      network: Default
+      egress: 450000
+  devices:
+    USW-Lite-8-PoE-Beneden:
+      mac: 9c:05:d6:38:93:09
+      ports:
+        1:
+          name: ap
+          profile: all
+        2: 
+          name: n100
+          profile: all_limited_egress
+        3: 
+          name: homeassistant
+          profile: prive
+        4: 
+          name: zakelijk
+          profile: zakelijk
+        5: 
+          name: desktop
+          profile: prive
+        6:
+          name: bitcoin
+          profile: prive_limited_egress
+        7: 
+          name: disabled
+          profile: disabled
+        8: 
+          name: USW-Flex-Mini
+          profile: all
+    USW-Lite-8-PoE-Boven:
+      mac: 9c:05:d6:38:92:8b
+      ports:
+        1:
+          name: ap
+          profile: all
+        2: 
+          name: nvidia shield
+          profile: prive
+        3:
+          name: shared
+          profile: shared
+        4:
+          name: disabled
+          profile: disabled
+        5:
+          name: disabled
+          profile: disabled
+        6:
+          name: disabled
+          profile: disabled
+        7: 
+          name: USW-Flex-Mini
+          profile: all
+        8:
+          name: disabled
+          profile: disabled
+    USW-Flex-Mini:
+      mac: f4:e2:c6:68:4d:8d
+      ports:
+        1:
+          name: opnsense
+          profile: all
+        2: 
+          name: USW-Lite-8-PoE-Beneden
+          profile: all
+        3: 
+          name: untrusted
+          profile: untrusted
+        4: 
+          name: USW-Lite-8-PoE-Boven
+          profile: all
+        5: 
+          name: untrusted
+          profile: untrusted
+  wlan:
+    ZiggoAFDC2AF:
+      vlan: untrusted
+      isolation: true
+    Malse Makker Mansion:
+      vlan: shared
+    Malse Zaken:
+      vlan: zakelijk
+      wpa3: true
+      isolation: true
+    Malse Skynet:
+      vlan: prive
+vlans:
+  zakelijk:
+    description: business
+    tag: 10
+    interface: opt1
+    firewall:
+      allow_local_dns:
+        action: pass
+        direction: in
+        protocol: UDP
+        destination:
+          net: zakelijkip
+          port: 53
+        log: true
+      allow_internet_access:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          invert: true
+          net: PrivateNetworks
+        log: true
+  prive:
+    description: private
+    tag: 11
+    interface: opt2
+    firewall:
+      allow_local_dns:
+        action: pass
+        direction: in
+        protocol: UDP
+        destination:
+          net: priveip
+          port: 53
+      allow_internet_access:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          invert: true
+          net: PrivateNetworks
+      allow_prive_into_lan:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          net: lan
+      allow_ha_to_lezer:
+        action: pass
+        direction: in
+        protocol: TCP
+        destination:
+          net: 192.168.13.78
+          port: 80
+  untrusted:
+    description: untrusted devices
+    tag: 13
+    interface: opt4
+    firewall:
+      allow_local_dns:
+        action: pass
+        direction: in
+        protocol: UDP
+        destination:
+          net: untrustedip
+          port: 53
+      allow_internet_access:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          invert: true
+          net: PrivateNetworks
+  shared:
+    description: shared
+    tag: 14
+    interface: opt5
+    firewall:
+      allow_local_dns:
+        action: pass
+        direction: in
+        protocol: UDP
+        destination:
+          net: sharedip
+          port: 53
+      allow_internet_access:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          invert: true
+          net: PrivateNetworks
+# firewall:
+#   lan:
+#     allow_prive_to_lan:
+#       action: pass
+#       direction: in
+#       protocol: any
+#       source:
+#         net: opt2
+#       destination:
+#         net: lan
