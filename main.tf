@@ -9,12 +9,14 @@ resource "opnsense_firewall_alias" "PrivateNetworks" {
   content = [
     "10.0.0.0/8",
     "172.16.0.0/12",
-    "192.168.0.0/16"
+    "192.168.0.0/16",
+    "FC00::/7",
+    "FD00::/7"
   ]
 
   ip_protocol = null
   stats       = true
-  description = "All local networks (ipv4 only)"
+  description = "All local networks (ipv4 + ipv6)"
 }
 
 # module "firewall_rules" {
