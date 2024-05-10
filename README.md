@@ -1,4 +1,8 @@
+This is an as-code (as far as the API's allow) configuration of a Unifi / OPNsense setup. All hardware is Unifi, except the router which also functions as the firewall. Modem is from ISP and connected to router in bridge mode.
+
 Opnsense has a limited API. os-firewall plugin must be installed.
+
+BitWarden provider config must be changed with your own config before use.
 
 Always first setup the VLAN's, there are dependency issues that are not enforced you'll otherwise run into.
 
