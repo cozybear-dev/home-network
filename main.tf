@@ -2,6 +2,7 @@ locals {
   configuration = yamldecode(file("${path.root}/configuration.yaml"))
 }
 
+# General private network alias to be used in firewall rules
 resource "opnsense_firewall_alias" "PrivateNetworks" {
   name = "PrivateNetworks"
 
@@ -19,15 +20,30 @@ resource "opnsense_firewall_alias" "PrivateNetworks" {
   description = "All local networks (ipv4 + ipv6)"
 }
 
-# module "firewall_rules" {
-#   source = "./firewall"
+# Manage local DNS aliases
+locals {
+  host_overrides = merge([
+    for ip, domains in local.configuration["unbound"]["local_dns"] : {
+      for domain in domains : "${ip}_${domain}" => {
+        ip_address = ip
+        domain     = domain
+      }
+    }
+  ]...)
+}
 
-#   for_each = local.configuration["firewall"]
+resource "opnsense_unbound_host_override" "a_override" {
+  for_each = local.host_overrides
 
-#   firewall  = local.configuration["firewall"][each.key]
-#   interface = each.key
-# }
+  enabled     = true
+  description = "local A record override"
 
+  hostname = "*"
+  server   = each.value.ip_address
+  domain   = each.value.domain
+}
+
+# Manage VLANs
 module "vlan" {
   source = "./vlan"
 
@@ -41,6 +57,7 @@ module "vlan" {
   firewall    = each.value.firewall
 }
 
+# Manage Unifi APs
 data "bitwarden_item_login" "wlan_pass" {
   for_each = local.configuration["unifi"]["wlan"]
   search   = each.key
@@ -50,6 +67,10 @@ data "unifi_ap_group" "default" {
 }
 
 data "unifi_user_group" "default" {
+}
+
+data "unifi_network" "Default" {
+  name = "Default"
 }
 
 resource "unifi_wlan" "wlan" {
@@ -70,10 +91,7 @@ resource "unifi_wlan" "wlan" {
   user_group_id = data.unifi_user_group.default.id
 }
 
-data "unifi_network" "Default" {
-  name = "Default"
-}
-
+# Manage Unifi switches
 resource "unifi_port_profile" "profile" {
   for_each = local.configuration["unifi"]["port_profiles"]
 

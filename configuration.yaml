@@ -144,6 +144,13 @@ vlans:
         destination:
           net: priveip
           port: 53
+      allow_local_dns_tcp:
+        action: pass
+        direction: in
+        protocol: TCP
+        destination:
+          net: priveip
+          port: 53
       allow_internet_access:
         action: pass
         direction: in
@@ -208,13 +215,23 @@ vlans:
         destination:
           invert: true
           net: PrivateNetworks
-# firewall:
-#   lan:
-#     allow_prive_to_lan:
-#       action: pass
-#       direction: in
-#       protocol: any
-#       source:
-#         net: opt2
-#       destination:
-#         net: lan
+unbound:
+  local_dns:
+    192.168.178.1:
+      - opnsense.local
+    192.168.178.159:
+      - unifi.local 
+      - htpc.local
+      - n100.local
+    192.168.11.136:
+      - bitcoin.local
+      - autobrr.local
+      - kuma.local
+      - cozy.local
+    192.168.11.249:
+      - ha.local
+      - z2m.local
+    192.168.13.2:
+      - ledstrip.local
+    192.168.13.78:
+      - slimmelezer.local 
