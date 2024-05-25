@@ -1,5 +1,5 @@
 resource "opnsense_firewall_filter" "rule" {
-  for_each = var.firewall
+  for_each = var.firewall != null ? var.firewall : {}
 
   enabled = true
 

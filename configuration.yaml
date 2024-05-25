@@ -4,12 +4,14 @@ unifi:
       forward: native
     zakelijk:
       forward: native
+    eyes:
+      forward: native
     prive:
       forward: native
     prive_limited_egress:
       vlan: prive
       forward: native
-      egress: 450000
+      egress: 650000
     shared:
       forward: native
     disabled:
@@ -24,7 +26,7 @@ unifi:
     all_limited_egress:
       forward: all
       network: Default
-      egress: 450000
+      egress: 650000
   devices:
     USW-Lite-8-PoE-Beneden:
       mac: 9c:05:d6:38:93:09
@@ -39,17 +41,17 @@ unifi:
           name: homeassistant
           profile: prive
         4: 
+          name: camera
+          profile: eyes
+        5:
           name: zakelijk
           profile: zakelijk
-        5: 
-          name: desktop
-          profile: prive
         6:
           name: bitcoin
           profile: prive_limited_egress
         7: 
-          name: disabled
-          profile: disabled
+          name: desktop
+          profile: prive
         8: 
           name: USW-Flex-Mini
           profile: all
@@ -164,6 +166,18 @@ vlans:
         protocol: any
         destination:
           net: lan
+      allow_prive_into_shared:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          net: shared
+      allow_prive_into_eyes:
+        action: pass
+        direction: in
+        protocol: any
+        destination:
+          net: eyes
       allow_ha_to_led_strip:
         action: pass
         direction: in
@@ -215,6 +229,18 @@ vlans:
         destination:
           invert: true
           net: PrivateNetworks
+  eyes:
+    description: private eyes
+    tag: 15
+    interface: opt3
+    firewall:
+      allow_local_ntp:
+        action: pass
+        direction: in
+        protocol: UDP
+        destination:
+          net: eyesip
+          port: 123
 unbound:
   local_dns:
     192.168.178.1:

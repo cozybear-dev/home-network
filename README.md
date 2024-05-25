@@ -20,7 +20,7 @@ For each new VLAN creation, you need to do the following manually (for now):
   * Set the range (e.g. 192.168.TAG.1-192.168.TAG.254)
     * If you're unable to set it, you most likely left static config at /32
 
-Beware that if you want no Tagged VLAN Management in a Port Profile in Unifi - but with a native vlan set, you need to set this manually in the UI after creation -> and you must set forward to native. Not sure where the issue lays nor do I want to figure it out for now, could be API or the Terraform provider.
+Beware that if you want no Tagged VLAN Management in a Port Profile in Unifi - but with a native vlan set, you need to set this manually in the UI after creation -> and you must set forward to native. Not sure where the issue lays nor do I want to figure it out for now, could be API or the Terraform provider. If you don't do this, you'll have a persistent: forward = "customize" -> "native" change.
 
 For each new VLAN deletion, you need to do the following manually (for now):
 
