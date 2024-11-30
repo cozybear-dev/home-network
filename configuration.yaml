@@ -198,6 +198,13 @@ vlans:
         destination:
           net: 192.168.13.78
           port: 6053
+      allow_ha_to_ble_api:
+        action: pass
+        direction: in
+        protocol: TCP
+        destination:
+          net: 192.168.13.7
+          port: 6053
   untrusted:
     description: untrusted devices
     tag: 13
@@ -268,3 +275,5 @@ unbound:
       - ledstrip.local
     192.168.13.78:
       - slimmelezer.local 
+    192.168.13.7:
+      - ble.local
