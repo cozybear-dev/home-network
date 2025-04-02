@@ -203,8 +203,15 @@ vlans:
         direction: in
         protocol: TCP
         destination:
-          net: 192.168.13.7
+          net: 192.168.13.13
           port: 6053
+      allow_ha_to_wled_api:
+        action: pass
+        direction: in
+        protocol: TCP
+        destination:
+          net: 192.168.13.18
+          port: 80
   untrusted:
     description: untrusted devices
     tag: 13
@@ -217,13 +224,13 @@ vlans:
         destination:
           net: untrustedip
           port: 53
-      allow_internet_access:
+      allow_internet_access_for_telnr_proxy_to_healthcheck:
         action: pass
         direction: in
         protocol: any
         destination:
           invert: true
-          net: PrivateNetworks
+          net: 192.168.13.7
   shared:
     description: shared
     tag: 14
@@ -275,5 +282,7 @@ unbound:
       - ledstrip.local
     192.168.13.78:
       - slimmelezer.local 
-    192.168.13.7:
+    192.168.13.13:
       - ble.local
+    192.168.13.18:
+      - wled-gang.local
